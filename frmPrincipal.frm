@@ -539,7 +539,11 @@ Private Sub btnTeste_Click()
     Set rsFind = New ADODB.Recordset
     rsFind.Open sqlFind, cnFind, adOpenStatic, adLockOptimistic
     
-    Set dgLogTransacoes.DataSource = rsFind
+    If rsFind.RecordCount = 0 Then
+        MsgBox "Não existe(m) transação(ões) cadastradas!", vbExclamation
+    Else
+        Set dgLogTransacoes.DataSource = rsFind
+    End If
 End Sub
 
 Public Sub dgLogTransacoes_Click()
