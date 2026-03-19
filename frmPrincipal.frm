@@ -408,8 +408,12 @@ Private Sub btnConsultar_Click()
     Set rsFind = New ADODB.Recordset
     rsFind.Open sqlFind, cnFind, adOpenStatic, adLockOptimistic
     
-    Set dgLogTransacoes.DataSource = rsFind
-    dgLogTransacoes.Columns(3).NumberFormat = "dd/mm/yyyy"
+    If rsFind.RecordCount = 0 Then
+        MsgBox "Não há transação(ões) cadastrada(s)!", vbExclamation
+    Else
+        Set dgLogTransacoes.DataSource = rsFind
+        dgLogTransacoes.Columns(3).NumberFormat = "dd/mm/yyyy"
+    End If
     
 End Sub
 
@@ -453,6 +457,11 @@ Private Sub btnExportar_Click()
     
     Set rsExporta = New ADODB.Recordset
     rsExporta.Open "SELECT Numero_Cartao, Valor_Transacao, Data_Transacao, Descricao, dbo.fn_CategoriaTransacao(Valor_Transacao) AS Categoria FROM Transacao WHERE Data_Transacao >= DATEADD(month, -1, GETDATE())", connExporta, adOpenStatic, adLockReadOnly
+    
+    If rsExporta.RecordCount = 0 Then
+        MsgBox "Não há transação(ções) cadastrada(s) para exportar!", vbExclamation
+        Exit Sub
+    End If
     
     Set xlApp = CreateObject("Excel.Application")
     Set xlBook = xlApp.Workbooks.Add
@@ -684,6 +693,17 @@ Private Sub txtOptnDataTransacao_GotFocus()
     txtOptnValorTransacao.BackColor = &HFFFFFF
 End Sub
 
+Private Sub txtOptnDataTransacao_KeyPress(KeyAscii As Integer)
+    If KeyAscii = 13 Then
+        If (RTrim(LTrim(txtOptnDataTransacao.Text)) <> "") And (ValidaData(txtOptnDataTransacao.Text)) Then
+            btnConsultar_Click
+        Else
+            MsgBox "Data inválida!", vbExclamation
+            txtOptnDataTransacao.Text = ""
+        End If
+    End If
+End Sub
+
 Private Sub txtOptnDataTransacao_LostFocus()
     With txtOptnDataTransacao
         If (RTrim(LTrim(.Text)) <> "") And (Not ValidaData(.Text)) Then
@@ -707,6 +727,9 @@ Private Sub txtOptnNumeroCartao_KeyPress(KeyAscii As Integer)
     Select Case KeyAscii
         Case 8
         Case 13
+            If (RTrim(LTrim(txtOptnNumeroCartao.Text)) <> "") And (IsNumeric(txtOptnNumeroCartao.Text)) Then
+                btnConsultar_Click
+            End If
         Case 48 To 57
         Case Else
             MsgBox "Este campo aceita somente números!", vbInformation
@@ -735,6 +758,20 @@ Private Sub txtOptnValorTransacao_GotFocus()
     txtOptnDataTransacao.BackColor = &HFFFFFF
 End Sub
 
+Private Sub txtOptnValorTransacao_KeyPress(KeyAscii As Integer)
+    Select Case KeyAscii
+        Case 8
+        Case 13
+            If Int(txtOptnValorTransacao.Text) > 0 Then
+                btnConsultar_Click
+            End If
+        Case 48 To 57
+        Case Else
+            MsgBox "Este campo aceita somente números!", vbInformation
+            KeyAscii = 0
+    End Select
+End Sub
+
 Private Sub txtValorTransacao_Change()
     If strAcao = incluindo Then
         Dim ValorTexto As String
@@ -757,8 +794,6 @@ Private Sub txtValorTransacao_KeyPress(KeyAscii As Integer)
     Select Case KeyAscii
         Case 8
         Case 13
-        Case 44
-        Case 46
         Case 48 To 57
         Case Else
             MsgBox "Este campo aceita somente números!", vbInformation

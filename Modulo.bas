@@ -64,6 +64,10 @@ End Sub
 
 Function ValidaData(dataTexto As String) As Boolean
     If IsDate(dataTexto) Then
+        If CDate(dataTexto) < CDate("22/04/1980") Then
+            ValidaData = False
+            Exit Function
+        End If
         ValidaData = True
     Else
         ValidaData = False
