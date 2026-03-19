@@ -387,7 +387,6 @@ Private Sub btnConsultar_Click()
         Exit Sub
     End If
     
-    
     Dim valorFormatado As String
     
     If optNumeroCartao Then
@@ -415,7 +414,6 @@ Private Sub btnConsultar_Click()
 End Sub
 
 Private Sub btnEditar_Click()
-    
     If strTrasacaoSelecionada = 0 Then
         MsgBox "É necessário selecionar uma transação no Histórico de Transações!", vbOKOnly + vbInformation, "Informar Transação"
         Exit Sub
@@ -425,12 +423,9 @@ Private Sub btnEditar_Click()
     habilitaBotoes (acao.editando)
     
     strAcao = editando
-    
-
 End Sub
 
 Private Sub btnExcluir_Click()
-    
     If strTrasacaoSelecionada = 0 Then
         MsgBox "É necessário selecionar uma transação no Histórico de Transações!", vbOKOnly + vbInformation, "Informar Transação"
         Exit Sub
@@ -442,7 +437,6 @@ Private Sub btnExcluir_Click()
         strAcao = excluindo
         excluir
     End If
-    
 End Sub
 
 Private Sub btnExportar_Click()
@@ -454,27 +448,22 @@ Private Sub btnExportar_Click()
     Dim contador1 As Integer
     Dim strCaminho As String
     
-    ' Conecta ao banco de dados
     Set connExporta = New ADODB.Connection
     connExporta.Open "Provider=SQLOLEDB;Data Source=" & strServidor & ";Initial Catalog=" & strDatabase & ";User Id=" & strUsuario & ";Password=" & strSenha & ";"
     
-    ' Executa a consulta
     Set rsExporta = New ADODB.Recordset
     rsExporta.Open "SELECT Numero_Cartao, Valor_Transacao, Data_Transacao, Descricao, dbo.fn_CategoriaTransacao(Valor_Transacao) AS Categoria FROM Transacao WHERE Data_Transacao >= DATEADD(month, -1, GETDATE())", connExporta, adOpenStatic, adLockReadOnly
     
-    ' Cria o objeto Excel
     Set xlApp = CreateObject("Excel.Application")
     Set xlBook = xlApp.Workbooks.Add
     Set xlSheet = xlBook.Worksheets(1)
     
-    ' Define o título das colunas
     xlSheet.Cells(1, 1).Value = "Numero_Cartao"
     xlSheet.Cells(1, 2).Value = "Valor_Transacao"
     xlSheet.Cells(1, 3).Value = "Data_Transacao"
     xlSheet.Cells(1, 4).Value = "Descricao"
     xlSheet.Cells(1, 5).Value = "Categoria"
     
-    ' Preenche os dados
     contador1 = 2
     While Not rsExporta.EOF
         xlSheet.Cells(contador1, 1).Value = rsExporta!Numero_Cartao
@@ -486,7 +475,6 @@ Private Sub btnExportar_Click()
         rsExporta.MoveNext
     Wend
     
-    ' Abre a caixa de diálogo para salvar o arquivo
     dlgExportacao.Filter = "Arquivos do Excel(*.xlsx)|*.xls"
     dlgExportacao.DefaultExt = "xlsx"
     
@@ -495,8 +483,6 @@ Private Sub btnExportar_Click()
     strCaminho = dlgExportacao.FileName
     
     
-    'strCaminho = Application.GetSaveAsFilename(FileFilter:="Arquivos Excel (*.xls), *.xls", Title:="Salvar arquivo Excel")
-    
     If strCaminho <> "" Then
         xlBook.SaveAs strCaminho
         MsgBox "Arquivo salvo com sucesso em: " & strCaminho, vbInformation, "Exportação"
@@ -504,7 +490,6 @@ Private Sub btnExportar_Click()
         MsgBox "Exportação cancelada!", vbExclamation, "Exportação"
     End If
     
-    ' Fecha os objetos
     xlBook.Close
     xlApp.Quit
     Set xlSheet = Nothing
@@ -525,7 +510,6 @@ Private Sub btnNovo_Click()
     panConsulta.Enabled = False
     
     setaAcao " Inserindo nova transação!"
-        
 End Sub
 
 Private Sub btnSalvar_Click()
@@ -548,8 +532,6 @@ Private Sub btnSalvar_Click()
         panConsulta.Enabled = True
     End If
 End Sub
-
-
 
 Private Sub btnTeste_Click()
     sqlFind = "SELECT  Numero_Cartao, Valor_Transacao, dbo.fn_CategoriaTransacao(Valor_Transacao) AS Categoria FROM Transacao;"
@@ -580,7 +562,7 @@ Public Sub dgLogTransacoes_RowColChange(LastRow As Variant, ByVal LastCol As Int
 End Sub
 
 Private Sub Form_Load()
-    'frmPrincipal.dgLogTransacoes.Columns(0).Width = 0
+    frmPrincipal.dgLogTransacoes.Columns(0).Width = 0
     
     Arquivo_Dados
     habilitaCampos (False)
@@ -596,16 +578,12 @@ Private Sub Form_Load()
 
     strTrasacaoSelecionada = 0
     
-    ' 1. Configurar a conexão
     Set cnFind = New ADODB.Connection
     strConnFind = "Provider=SQLOLEDB;Data Source=" & strServidor & ";Initial Catalog=" & strDatabase & ";User Id=" & strUsuario & ";Password=" & strSenha & ";"
     cnFind.Open strConnFind
-    
-    
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
-     ' Fechar conexão ao sair
     If Not rsFind Is Nothing Then
         If rsFind.State = adStateOpen Then rsFind.Close
         Set rsFind = Nothing
@@ -615,8 +593,6 @@ Private Sub Form_Unload(Cancel As Integer)
         Set cnFind = Nothing
     End If
 End Sub
-
-
 
 Private Sub optDtTransacao_Click()
     txtOptnDataTransacao.BackColor = &HFFC0C0
@@ -647,7 +623,6 @@ Private Sub txtDataTransacao_KeyPress(KeyAscii As Integer)
 End Sub
 
 Private Sub txtDataTransacao_LostFocus()
-
     If (RTrim(LTrim(txtDataTransacao.Text <> ""))) Then
         If (Not ValidaData(txtDataTransacao.Text)) Then
             MsgBox "Informe uma data válida! Ex: " & Date, vbInformation
@@ -659,9 +634,7 @@ Private Sub txtDataTransacao_LostFocus()
     End If
     
     txtDataTransacao.BackColor = &HFFFFFF
-    
 End Sub
-
 
 Private Sub txtDescricao_GotFocus()
     txtDescricao.BackColor = &HFFC0C0
@@ -759,7 +732,6 @@ Private Sub txtOptnValorTransacao_GotFocus()
 End Sub
 
 Private Sub txtValorTransacao_Change()
-    
     If strAcao = incluindo Then
         Dim ValorTexto As String
         ValorTexto = Replace(txtValorTransacao.Text, "", "")
@@ -810,7 +782,6 @@ Private Sub habilitaCampos(blnAcao As Boolean)
 End Sub
 
 Private Sub habilitaBotoesClick(varAcao As acao)
-
     If varAcao = incluindo Then
         btnNovo.Enabled = False
         btnEditar.Enabled = False
@@ -866,7 +837,6 @@ Private Sub habilitaBotoesClick(varAcao As acao)
 End Sub
 
 Private Sub habilitaBotoes(varAcao As Integer)
-
     If varAcao = incluindo Then
         btnNovo.Enabled = False
         btnEditar.Enabled = False
@@ -924,7 +894,6 @@ End Sub
 
 
 Private Function consisteCampos() As Boolean
-    
     If (RTrim(LTrim(txtDataTransacao.Text)) = "") Then
         consisteCampos = False
         MsgBox "Informe a data da transação!", vbInformation
@@ -948,7 +917,6 @@ Private Function consisteCampos() As Boolean
     End If
     
     consisteCampos = True
-
 End Function
 
 Private Sub limpaCampos()
@@ -983,7 +951,6 @@ Private Sub findPorNumero(paramNumeroCartao As Integer)
         MsgBox "Erro ao conectar: " & Err.Description
         Exit Sub
     End If
-
 End Sub
 
     

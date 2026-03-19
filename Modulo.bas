@@ -30,7 +30,7 @@ End Enum
 
 Public strAcao As acao
 
-'Buscar informações no arquivo INI
+'Função para buscar informações no arquivo INI
 Public Function GetINISetting(ByVal sHeading As String, _
     ByVal sKey As String, _
     sINIFileName) As String
@@ -110,7 +110,6 @@ ErrorHandler:
         If conn.State = adStateOpen Then conn.Close
         Set conn = Nothing
     End If
-
 End Sub
 
 Public Sub editar(NumCart As String, ValTransac As Double, dtTransac As Date, DescTransac As String)
@@ -198,7 +197,5 @@ Public Sub atualizaDataGrid()
     
     frmPrincipal.dgLogTransacoes.Columns(3).NumberFormat = "dd/mm/yyyy"
     frmPrincipal.dgLogTransacoes_Click
-
-        
 End Sub
 
