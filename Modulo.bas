@@ -197,5 +197,7 @@ Public Sub atualizaDataGrid()
     
     frmPrincipal.dgLogTransacoes.Columns(3).NumberFormat = "dd/mm/yyyy"
     frmPrincipal.dgLogTransacoes_Click
+    
+    frmPrincipal.dgLogTransacoes.Columns(0).Width = 0
 End Sub
 
